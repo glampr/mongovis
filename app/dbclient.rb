@@ -1,13 +1,27 @@
 class DbClient
 
-  def initialize(opts)
-    connection_options = {database: opts.fetch("mongo_db", "tmp")}
-    if !opts.fetch("mongo_user", "").empty? && !opts.fetch("mongo_pass", "").empty?
-      connection_options[:user] = opts.fetch["mongo_user"]
-      connection_options[:pass] = opts.fetch["mongo_pass"]
+  def initialize
+  end
+
+  def connect(opts)
+    opts.reject! { |k, v| v.to_s.empty? }
+    host = (opts.values_at(:mongo_host, "mongo_host") + ["127.0.0.1:27017"]).compact.first
+    db   = (opts.values_at(:mongo_db, "mongo_db") + ["tmp"]).compact.first
+    user = (opts.values_at(:mongo_user, "mongo_user")).compact.first
+    pass = (opts.values_at(:mongo_pass, "mongo_pass")).compact.first
+    connection_options = {database: db}
+    if !user.nil? && !pass.nil?
+      connection_options[:user] = user
+      connection_options[:password] = pass
       connection_options[:auth_mech] = :plain
     end
-    @client = Mongo::Client.new([opts.fetch("mongo_host", "127.0.0.1:27017")], connection_options)
+    if @client.nil? || @client.cluster.servers.first.address.to_s != host
+      @client = Mongo::Client.new([host], connection_options)
+    end
+  end
+
+  def close
+
   end
 
 end

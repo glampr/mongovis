@@ -4,7 +4,7 @@ module Sinatra
 
       def self.registered(app)
         app.before do
-          @dbclient = DbClient.new(cookies)
+          settings.dbclient.connect(cookies)
         end
 
         app.get '/' do
@@ -17,9 +17,12 @@ module Sinatra
 
         app.post '/connection' do
           cookies[:mongo_host] = params[:mongo_host]
+          cookies[:mongo_db]   = params[:mongo_db]
+
+          # not good practice, but easy hack
           cookies[:mongo_user] = params[:mongo_user]
           cookies[:mongo_pass] = params[:mongo_pass]
-          cookies[:mongo_db]   = params[:mongo_db]
+
           redirect to('/connection')
         end
       end

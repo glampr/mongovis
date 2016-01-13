@@ -4,19 +4,19 @@
     <form action="/connection" method="POST">
       <div class="form-group">
         <label for="mongo_host">Host</label>
-        <input type="text" class="form-control" id="mongo_host" name="mongo_host" placeholder="127.0.0.1:27017">
+        <input type="text" class="form-control" id="mongo_host" name="mongo_host" placeholder="127.0.0.1:27017" value="<%= cookies["mongo_host"]%>">
       </div>
       <div class="form-group">
         <label for="mongo_user">Username</label>
-        <input type="text" class="form-control" id="mongo_user" name="mongo_user" placeholder="Leave blank if not using authentication">
+        <input type="text" class="form-control" id="mongo_user" name="mongo_user" placeholder="Leave blank if not using authentication" value="<%= cookies["mongo_user"]%>">
       </div>
       <div class="form-group">
         <label for="mongo_pass">Password</label>
-        <input type="text" class="form-control" id="mongo_pass" name="mongo_pass" placeholder="Leave blank if not using authentication">
+        <input type="text" class="form-control" id="mongo_pass" name="mongo_pass" placeholder="Leave blank if not using authentication" value="<%= cookies["mongo_pass"]%>">
       </div>
       <div class="form-group">
         <label for="mongo_db">Database</label>
-        <input type="text" class="form-control" id="mongo_db" name="mongo_db" placeholder="database_name">
+        <input type="text" class="form-control" id="mongo_db" name="mongo_db" placeholder="tmp"  value="<%= cookies["mongo_db"]%>">
       </div>
       <button type="submit" class="btn btn-default">Submit</button>
     </form>

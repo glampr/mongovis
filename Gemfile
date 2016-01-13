@@ -6,4 +6,5 @@ gem 'thin'
 
 gem 'sinatra-asset-pipeline'
 
+gem 'json'
 gem 'mongo'

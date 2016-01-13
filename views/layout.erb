@@ -10,7 +10,7 @@
   <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
   <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing,visualization" %>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing,visualization"></script>
   <script type="text/javascript" src="<%= asset_path('application.js') %>"></script>
 </head>
 <body>
@@ -20,7 +20,7 @@
     <%#= render partial: "shared/modal" %>
   </div>
   <div id="loading-spinner" class="hidden">
-    <img src="<%= image_path('loading.gif') %>" alt="" />
+    <img src="<%= image_path('loading.gif') %>" alt=""/>
   </div>
 </body>
 </html>

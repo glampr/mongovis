@@ -8,7 +8,15 @@ module Sinatra
         end
 
         app.get '/' do
-          erb :index
+          erb :index, locals: {geofield: "", query: "", results: []}
+        end
+
+        app.post '/' do
+          geofield = params[:geofield]
+          query = params[:query].strip
+          results = settings.dbclient.query(cookies[:mongo_collection], params)
+
+          erb :index, locals: {geofield: geofield, query: query, results: results}
         end
 
         app.get '/connection' do
@@ -24,6 +32,12 @@ module Sinatra
           cookies[:mongo_pass] = params[:mongo_pass]
 
           redirect to('/connection')
+        end
+
+        app.get '/collection/:mongo_collection' do
+          cookies[:mongo_collection] = params[:mongo_collection]
+
+          redirect to('/')
         end
       end
 

@@ -11,6 +11,7 @@ GEM
     eventmachine (1.0.8)
     execjs (2.6.0)
     hike (1.2.3)
+    json (1.8.1)
     mongo (2.2.1)
       bson (~> 4.0)
     multi_json (1.11.2)
@@ -60,6 +61,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  json
   mongo
   sinatra
   sinatra-asset-pipeline

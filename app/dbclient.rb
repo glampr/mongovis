@@ -109,6 +109,7 @@ class DbClient
 
   def query(collection_name, params)
     geofield = params[:geofield]
+    displayfield = params[:displayfield]
     query = JSON.parse(params[:query].to_s.strip) rescue query = nil
     results = @client.database[collection_name].find(query)
     results = results.skip(params[:skip].to_i) if !params[:skip].to_s.empty?
@@ -117,8 +118,8 @@ class DbClient
 
     {
       type: "FeatureCollection",
-      features: results.map { |r| r[geofield] } .compact.map do |g|
-                  {type: "Feature", geometry: g, properties: {}}
+      features: results.map do |r|
+                  {type: "Feature", geometry: r[geofield], properties: {v: r[displayfield]}}
                 end
     }
   end

@@ -10,3 +10,10 @@ jQuery ->
 
   if window.geojson
     gmap.data.addGeoJson(geojson)
+    gmap.data.addListener 'click', (event) ->
+      console.log event
+      v = event.feature.getProperty('v')
+      new google.maps.InfoWindow({
+        content: v + '',
+        position: event.latLng
+      }).open(gmap)

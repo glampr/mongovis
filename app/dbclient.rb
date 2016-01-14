@@ -42,6 +42,14 @@ class DbClient
     @client.database.collections
   end
 
+  def namespace_exists?(namespace)
+    if namespace.to_s.index(".").nil?
+      @client.database_names.include?(namespace)
+    else
+      !@client.database['system.namespaces'].find({'name' => namespace}).entries.empty?
+    end
+  end
+
   def collection_fields(collection_name)
     map = %Q{
       function() {
@@ -90,10 +98,12 @@ class DbClient
     }
 
     keys = []
-    @client.database[collection_name].find.map_reduce(map, reduce, {
-      out: {inline: 1},
-      raw: true
-    }).each { |h| keys << h["_id"].gsub("->", ".") }
+    if namespace_exists?([database, collection_name].join("."))
+      @client.database[collection_name].find.map_reduce(map, reduce, {
+        out: {inline: 1},
+        raw: true
+      }).each { |h| keys << h["_id"].gsub("->", ".") }
+    end
     keys
   end
 

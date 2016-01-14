@@ -18,6 +18,10 @@
           <a href="/connection">
             <% if settings.dbclient.server_address.empty? %>
               <strong class="text-danger">Not connected</strong>
+            <% elsif !settings.dbclient.namespace_exists?(settings.dbclient.database) %>
+              <strong class="text-danger">
+                Database '<%= settings.dbclient.database %>' does NOT exist!
+              </strong>
             <% else %>
               <strong class="text-success">
                 mongodb://<%= settings.dbclient.server_address %>/<%= settings.dbclient.database %>

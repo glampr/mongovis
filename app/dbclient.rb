@@ -119,9 +119,25 @@ class DbClient
     {
       type: "FeatureCollection",
       features: results.map do |r|
-                  {type: "Feature", geometry: r[geofield], properties: {v: r[displayfield]}}
+                  {
+                    type: "Feature",
+                    geometry: fetch_field_value(r, geofield),
+                    properties: {v: fetch_field_value(r, displayfield)}
+                  }
                 end
     }
+  end
+
+  def fetch_field_value(doc, f)
+    return nil if doc.nil? || doc.respond_to?(:[])
+    field = f.to_s
+    field, tail = field.split(".", 2)
+    subdoc = doc[field]
+    if tail.nil?
+      subdoc
+    elsif !subdoc.nil?
+      fetch_field_value(subdoc, tail)
+    end
   end
 
 end

@@ -129,7 +129,7 @@ class DbClient
   end
 
   def fetch_field_value(doc, f)
-    return nil if doc.nil? || doc.respond_to?(:[])
+    return nil if doc.nil? || !doc.respond_to?(:[])
     field = f.to_s
     field, tail = field.split(".", 2)
     subdoc = doc[field]

@@ -99,7 +99,7 @@ class DbClient
 
     keys = []
     if namespace_exists?([database, collection_name].join("."))
-      @client.database[collection_name].find.map_reduce(map, reduce, {
+      @client.database[collection_name].find.limit(50).map_reduce(map, reduce, {
         out: {inline: 1},
         raw: true
       }).each { |h| keys << h["_id"].gsub("->", ".") }

@@ -1,1 +1,1 @@
-//= require mongovis
+//= require socialinks

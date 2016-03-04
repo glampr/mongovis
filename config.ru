@@ -6,6 +6,6 @@ Bundler.require
 require './application'
 
 require 'sinatra/asset_pipeline/task'
-Sinatra::AssetPipeline::Task.define! MongoVis
+Sinatra::AssetPipeline::Task.define! SociaLinks
 
-run MongoVis
+run SociaLinks

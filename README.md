@@ -1,8 +1,8 @@
-# mongovis
-Simple web visualization tool for geospatial MongoDB collections
+# SociaLinks
+Simple web visualization tool for linking stuff with social links
 
 # Installation
-Download the source code of the application ```git clone https://github.com/glampr/mongovis.git```.
+Download the source code of the application ```git clone https://github.com/glampr/socialinks.git```.
 You need to have ruby and bundler installed.
 If RVM is installed, then a gemset will be automatically created when navigating to the downloaded folder (because of ```.ruby-version``` file).
 

@@ -1,5 +1,5 @@
 module Sinatra
-  module MongoVis
+  module SociaLinks
     module Routes
 
       def self.registered(app)
@@ -16,7 +16,13 @@ module Sinatra
           query = params[:query].strip
           results = settings.dbclient.query(cookies[:mongo_collection], params)
 
-          erb :index, locals: {geofield: geofield, query: query, results: results}
+          # erb :index, locals: {geofield: geofield, query: query, results: results}
+          results.to_json
+        end
+
+        app.get '/collection/:mongo_collection' do
+          cookies[:mongo_collection] = params[:mongo_collection]
+          {keys: settings.dbclient.collection_fields(params[:mongo_collection])}.to_json
         end
 
         app.get '/connection' do
@@ -34,11 +40,6 @@ module Sinatra
           redirect to('/connection')
         end
 
-        app.get '/collection/:mongo_collection' do
-          cookies[:mongo_collection] = params[:mongo_collection]
-
-          redirect to('/')
-        end
       end
 
     end

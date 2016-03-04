@@ -7,4 +7,5 @@ gem 'thin'
 gem 'sinatra-asset-pipeline'
 
 gem 'json'
-gem 'mongo'
+gem 'mongoid'
+gem 'georuby'

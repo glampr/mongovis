@@ -122,7 +122,7 @@ class DbClient
                   {
                     type: "Feature",
                     geometry: fetch_field_value(r, geofield),
-                    properties: {v: fetch_field_value(r, displayfield)}
+                    properties: {v: fetch_field_value(r, displayfield), c: params[:color]}
                   }
                 end
     }

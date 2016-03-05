@@ -6,6 +6,7 @@ class Link
   field :b_id, type: Integer
   field :a_loc, type: Hash
   field :b_loc, type: Hash
+  field :line, type: Hash
   field :a_time, type: Time
   field :b_time, type: Time
   field :distance, type: Integer

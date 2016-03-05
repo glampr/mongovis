@@ -49,6 +49,7 @@ class Region
             b_id: link_region.id,
             a_loc: region.center,
             b_loc: link_region.center,
+            line: {type: "LineString", coordinates: [region.center["coordinates"], link_region.center["coordinates"]]},
             a_time: link.a_time,
             b_time: link.b_time,
             distance: link.distance,

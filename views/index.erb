@@ -5,22 +5,23 @@
       <div class="form-group">
         <% fields_names = settings.dbclient.collection_fields(cookies[:mongo_collection]) %>
         <label for="geo_field">Select GeoJSON field name</label>
-        <select class="form-control" id="geofield" name="geofield">
+        <select class="form-control input-sm" id="geofield" name="geofield">
           <% fields_names.each do |f| %>
             <option value="<%= f %>" <%= "selected" if f == geofield %>><%= f %></option>
           <% end %>
         </select>
         <div class="clearfix" style="margin-top:2px;"></div>
         <label for="displayfield">Select display field name</label>
-        <select class="form-control" id="displayfield" name="displayfield">
+        <select class="form-control input-sm" id="displayfield" name="displayfield">
           <% fields_names.each do |f| %>
             <option value="<%= f %>" <%= "selected" if f == params[:displayfield] %>><%= f %></option>
           <% end %>
         </select>
         <div class="clearfix" style="margin-top:2px;"></div>
         <label for="displayfield">Select color</label>
-        <input type="color" name="color" value="#fff" style="width:50%;">
+        <input type="color" name="color" value="#000000" style="width:50%;">
       </div>
+      <div class="clearfix" style="margin-top:2px;"></div>
       <button type="submit" class="btn btn-default">Visualize</button>
     </div>
     <div class="col-xs-6">

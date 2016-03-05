@@ -19,6 +19,7 @@ class Path
         link.b_id = path.post_ids[i + 1]
         link.a_loc = {type: "Point", coordinates: path.route["coordinates"][i]}
         link.b_loc = {type: "Point", coordinates: path.route["coordinates"][i + 1]}
+        link.line = {type: "LineString", coordinates: [path.route["coordinates"][i], path.route["coordinates"][i + 1]]}
         link.a_time = Time.at path.times[i]
         link.b_time = Time.at path.times[i + 1]
         orgn = GeoRuby::SimpleFeatures::Point.from_coordinates(link[:a_loc][:coordinates])

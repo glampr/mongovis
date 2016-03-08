@@ -37,7 +37,7 @@ module Sinatra
           cookies[:mongo_user] = params[:mongo_user]
           cookies[:mongo_pass] = params[:mongo_pass]
 
-          redirect to('/connection')
+          redirect to('/')
         end
 
       end

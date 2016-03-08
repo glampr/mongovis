@@ -1,6 +1,6 @@
 <div class="row">
   <form class="form-inline" action="/" method="POST" id="visualize_layer">
-    <div class="col-xs-6">
+    <div class="col-xs-5">
       <h3>Showing collection: <span class="active_connection"><%= cookies[:mongo_collection] %></span> </h3>
       <div class="form-group">
         <% fields_names = settings.dbclient.collection_fields(cookies[:mongo_collection]) %>
@@ -19,15 +19,17 @@
         </select>
         <div class="clearfix" style="margin-top:2px;"></div>
         <label for="displayfield">Select color</label>
-        <input type="color" name="color" value="#000000" style="width:50%;">
+        <input type="color" name="color" value="#000000" style="width:50%;" id="query-color">
+        <input type="hidden" name="collection" value="<%= cookies[:mongo_collection] %>" id="query-collection">
       </div>
       <div class="clearfix" style="margin-top:2px;"></div>
       <button type="submit" class="btn btn-default">Visualize</button>
+      <a class="btn btn-default" id="clear_layers">Clear all layers</a>
     </div>
-    <div class="col-xs-6">
+    <div class="col-xs-7">
       <h4>Query: db.<span class="active_connection"><%= cookies[:mongo_collection] %></span>.find(...) </h4>
       <div class="form-group" style="width:100%">
-        <textarea class="form-control" style="width:100%" rows="3" name="query"><%= query %></textarea>
+        <textarea class="form-control" style="width:100%" rows="3" name="query" id="query"><%= query %></textarea>
         <p class="hint">
           <small><em>Be sure to provide a valid JSON query. Check your input at <a href="http://jsonlint.com/">http://jsonlint.com/</a>.</em></small>
         </p>

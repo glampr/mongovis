@@ -17,13 +17,14 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.10.0)
+    colorize (0.7.7)
     daemons (1.2.3)
     eventmachine (1.0.8)
     execjs (2.6.0)
     georuby (2.5.2)
     hike (1.2.3)
     i18n (0.7.0)
-    json (1.8.1)
+    json (1.8.3)
     minitest (5.8.4)
     mongo (2.2.4)
       bson (~> 4.0)
@@ -40,8 +41,8 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     rake (10.4.2)
-    rbgraph (0.1.0)
-      json
+    rbgraph (0.3.2)
+      json (~> 1.8, >= 1.8.3)
     sass (3.4.21)
     sinatra (1.4.6)
       rack (~> 1.4)
@@ -86,6 +87,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  colorize
   georuby
   json
   mongoid

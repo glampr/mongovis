@@ -112,9 +112,12 @@ class DbClient
     displayfield = params[:displayfield]
     query = JSON.parse(params[:query].to_s.strip) rescue query = nil
     results = @client.database[collection_name].find(query)
+    # results = results.distinct(params[:distinctfield]) if !params[:distinctfield].blank?
     results = results.skip(params[:skip].to_i) if !params[:skip].to_s.empty?
     results = results.limit(params[:limit].to_i) if !params[:limit].to_s.empty?
     results = results.sort(params[:sort]) if !params[:sort].to_s.empty?
+
+    results = results.entries.uniq { |r| r[params[:distinctfield]] } if !params[:distinctfield].blank?
 
     {
       type: "FeatureCollection",
@@ -125,7 +128,7 @@ class DbClient
                     properties: {
                       v: fetch_field_value(r, displayfield),
                       c: params[:color],
-                      w: r[:weight] || r["weight"]
+                      w: r[:"#{geofield}_weight"] || r["#{geofield}_weight"]
                     }
                   }
                 end

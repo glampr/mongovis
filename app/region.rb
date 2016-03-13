@@ -7,9 +7,6 @@ class Region
   field :bounds, type: Hash
   field :center, type: Hash
   field :post_ids, type: Array
-  field :space_ids, type: Array
-  field :next_regions, type: Array
-  field :prev_regions, type: Array
 
   def geo_polygon
     GeoRuby::SimpleFeatures::Polygon.from_coordinates(bounds["coordinates"])

@@ -1,1 +1,2 @@
+//= require googlemapstyle
 //= require socialinks

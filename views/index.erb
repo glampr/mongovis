@@ -18,7 +18,15 @@
           <% end %>
         </select>
         <div class="clearfix" style="margin-top:2px;"></div>
-        <label for="displayfield">Select color</label>
+        <label for="distinctfield">Select distinct field name</label>
+        <select class="form-control input-sm" id="distinctfield" name="distinctfield">
+          <option value="" <%= "selected" if params[:distinctfield].blank? %>></option>
+          <% fields_names.each do |f| %>
+            <option value="<%= f %>" <%= "selected" if f == params[:distinctfield] %>><%= f %></option>
+          <% end %>
+        </select>
+        <div class="clearfix" style="margin-top:2px;"></div>
+        <label for="query-color">Select color</label>
         <input type="color" name="color" value="#000000" style="width:50%;" id="query-color">
         <input type="hidden" name="collection" value="<%= cookies[:mongo_collection] %>" id="query-collection">
       </div>

@@ -97,6 +97,7 @@ class PostLink
   end
 
   def self.aggregate_graph(graph, max_level, max_nodes)
+    return if max_level < 1
     (1..max_level).each do |level|
       candidate_nodes = graph.nodes.values.select{ |node| node.data[:txy].try(:level) == level - 1 }
       nodes_per_cubicle = candidate_nodes.group_by { |node| node.data[:txy].xy_parent.id }
@@ -111,10 +112,17 @@ class PostLink
             existing_edge.data[:t] += new_edge.data[:t]
             existing_edge.weight += new_edge.weight
           end
+          if node_list.length == 1
+            parent_node.data[:single_node] = node_list.first
+          end
           # remove node if it contained only self connecting edges
           graph.remove_node!(parent_node) if parent_node.edges.empty?
         end
       end
+    end
+    false_parents = graph.nodes.values.select { |n| !n.data[:single_node].nil? } .each do |fp|
+      fp.id = fp.data[:single_node].id
+      fp.data = fp.data[:single_node].data
     end
   end
 
@@ -122,14 +130,14 @@ class PostLink
     graph.edges.values.each do |edge|
       a_loc = nil; b_loc = nil; a_ctr = nil; b_ctr = nil;
       if edge.node1.data[:r].nil?
-        a_loc = {"type" => "LineString", "coordinates" => edge.node1.data[:txy].xy_boundary}
+        a_loc = {"type" => "LineString", "coordinates" => edge.node1.data[:txy].xy_boundary, "properties" => {"level" => edge.node1.data[:txy].level}}
         a_ctr = edge.node1.data[:txy].xy_id_2d_center
       else
         a_loc = edge.node1.data[:r].bounds
         a_ctr = edge.node1.data[:r].center["coordinates"]
       end
       if edge.node2.data[:r].nil?
-        b_loc = {"type" => "LineString", "coordinates" => edge.node2.data[:txy].xy_boundary}
+        b_loc = {"type" => "LineString", "coordinates" => edge.node2.data[:txy].xy_boundary, "properties" => {"level" => edge.node2.data[:txy].level}}
         b_ctr = edge.node2.data[:txy].xy_id_2d_center
       else
         b_loc = edge.node2.data[:r].bounds
@@ -161,7 +169,7 @@ class LinkSpaceTimeId < SpaceTimeId
     xy_expansion: 5,       # expands into a 5x5 grid recursively
     ts_steps:     [3600],  # [600, 1800, 3600, 21600, 86400] [10min, 0.5h, 1h, 6h, 1day]
     ts_expansion: 2,       # expands 2 times each interval
-    decimals: 3
+    decimals: 2
   }
 
 end

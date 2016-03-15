@@ -90,6 +90,7 @@ jQuery ->
         arrayToSelectOptions($('#distinctfield'), [].concat.call('', data.keys))
         $('#geofield').val(q.g)
         $('#displayfield').val(q.d)
+        $('#distinctfield').val(q.n)
         $('#query-color').val(q.f)
     })
   )

@@ -25,3 +25,24 @@ class RegionLink
   end
 
 end
+
+
+# [
+#   {"$unwind" : "$b_times"},
+#   {"$project" : {
+#     "a_loc": 1,
+#     "b_loc": 1,
+#     "hour": {"$hour": "$b_times"},
+#     "line": 1,
+#     "count": {"$literal" : 1}
+#   }},
+#   {"$match" : {"hour" : {"$gte" : 4, "$lt": 10}}},
+#   {"$group" : {
+#     "_id": "$_id",
+#     "a_loc": {"$first" : "$a_loc"},
+#     "b_loc": {"$first" : "$b_loc"},
+#     "line": {"$first" : "$line"},
+#     "line_weight": {"$sum" : "$count"}
+#   }},
+#   {"$match" : {"line_weight" : {"$gte" : 2}}}
+# ]

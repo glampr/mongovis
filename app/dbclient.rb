@@ -111,7 +111,9 @@ class DbClient
     geofield = params[:geofield]
     displayfield = params[:displayfield]
     query = JSON.parse(params[:query].to_s.strip) rescue query = nil
+    aggregation = JSON.parse(params[:aggregation].to_s.strip) rescue aggregation = nil
     results = @client.database[collection_name].find(query)
+    results = results.aggregate(aggregation) if !aggregation.blank?
     # results = results.distinct(params[:distinctfield]) if !params[:distinctfield].blank?
     results = results.skip(params[:skip].to_i) if !params[:skip].to_s.empty?
     results = results.limit(params[:limit].to_i) if !params[:limit].to_s.empty?

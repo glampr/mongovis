@@ -39,7 +39,7 @@ class PostLink
     end
   end
 
-  def self.hybrid_grid(category, in_out_or_both = :in, max_level = 2, max_nodes = 10)
+  def self.hybrid_grid(category, in_out_or_both = :in, max_level = 2, max_nodes = 10, hours = [0,23])
     regions = Region.where(category: category).not.with_size(post_ids: 0).entries
     region_per_post = {}
     regions.each { |r| r.post_ids.each { |pi| region_per_post[pi] = r }}
@@ -67,6 +67,7 @@ class PostLink
 
       # Incoming links for the 'category', i.e. links that end inside regions of this category
       when :in
+        next if !link.b_time.utc.hour.in?(hours)
         start_region = region_per_post[link.a_id]
         if start_region.nil?
           point = LinkSpaceTimeId.new(link.a_loc["coordinates"])
@@ -78,8 +79,18 @@ class PostLink
         end_node = {id: end_region.center["coordinates"].join("_"), data: {r: end_region} }
       # Outgoing links for the 'category', i.e. links that begin from regions of this category
       when :out
-
+        next if !link.a_time.utc.hour.in?(hours)
+        start_region = region_per_post[link.a_id]
+        start_node = {id: start_region.center["coordinates"].join("_"), data: {r: start_region} }
+        end_region = region_per_post[link.b_id]
+        if end_region.nil?
+          point = LinkSpaceTimeId.new(link.b_loc["coordinates"])
+          end_node = {id: point.xy_id_str, data: {txy: point}}
+        else
+          end_node = {id: end_region.center["coordinates"].join("_"), data: {r: end_region} }
+        end
       when :both
+        next if !(link.a_time.utc.hour.in?(hours) && link.b_time.utc.hour.in?(hours))
 
       end
 
@@ -105,15 +116,15 @@ class PostLink
         if node_list.length < max_nodes
           parent = LinkSpaceTimeId.new(parent_id, level: level)
           # do not aggregate if there are nodes of more than one level down within the parent
-          next if parent.xy_descendants.any? do |pn|
-            graph.nodes[pn.id] && graph.nodes[pn.id].data[:txy].level == pn.level - 1
+          next if parent.xy_descendants.any? do |d|
+            graph.nodes[d.id] && graph.nodes[d.id].data[:txy].level < parent.level - 1
           end
           parent_node = graph.merge_nodes!(node_list.map(&:id), parent.id, {txy: parent}) do |graph, existing_edge, new_edge|
             existing_edge.data[:t] += new_edge.data[:t]
             existing_edge.weight += new_edge.weight
           end
           if node_list.length == 1
-            parent_node.data[:single_node] = node_list.first
+            parent_node.data[:single_node] = node_list.first.data[:single_node] || node_list.first
           end
           # remove node if it contained only self connecting edges
           graph.remove_node!(parent_node) if parent_node.edges.empty?

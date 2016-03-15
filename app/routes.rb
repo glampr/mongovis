@@ -8,12 +8,13 @@ module Sinatra
         end
 
         app.get '/' do
-          erb :index, locals: {geofield: "", query: "", results: []}
+          erb :index, locals: {geofield: "", query: "", aggregation: "", results: []}
         end
 
         app.post '/' do
           geofield = params[:geofield]
           query = params[:query].strip
+          aggregation = params[:aggregation].strip
           results = settings.dbclient.query(cookies[:mongo_collection], params)
 
           # erb :index, locals: {geofield: geofield, query: query, results: results}

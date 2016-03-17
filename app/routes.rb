@@ -24,12 +24,16 @@ module Sinatra
         app.get '/region_links' do
           @categories = Region.distinct(:category)
           category = params[:category]
-          @region_links = RegionLink.where("$or" => [{a_type: category}, {b_type: category}]).asc(:interval).group_by(&:interval)
-          @region_links.keys.each do |interval|
-            list = @region_links[interval]
-            @region_links[interval] = list.partition { |rl| rl.a_type.nil? }
+          if !category.blank?
+            @region_links = RegionLink.where("$or" => [{a_type: category}, {b_type: category}]).asc(:interval).group_by(&:interval)
+            @region_links.keys.each do |interval|
+              list = @region_links[interval]
+              @region_links[interval] = list.partition { |rl| rl.a_type.nil? }
+            end
+            erb :region_links
+          else
+            "No category selected"
           end
-          erb :region_links
         end
 
         app.get '/collection/:mongo_collection' do

@@ -39,24 +39,25 @@ class PostLink
     end
   end
 
-  def self.hybrid_grid(category, in_out_or_both = :in, max_level = 2, max_nodes = 10, hours = [0,23])
+  def self.hybrid_grid(category, in_out_or_both = :in, max_level = 2, max_nodes = 10, region_hours = (0..23).entries, other_hours = (0..23).entries)
     regions = Region.where(category: category).not.with_size(post_ids: 0).entries
     region_per_post = {}
     regions.each { |r| r.post_ids.each { |pi| region_per_post[pi] = r }}
     graph = Rbgraph::DirectedGraph.new
 
+    interval = [region_hours.first, region_hours.last].map { |h| h.to_s.rjust(2, "0") }.join("-")
     links = case in_out_or_both
     # Incoming links for the 'category', i.e. links that end inside regions of this category
     when :in
-      RegionLink.where(b_type: category).delete_all
+      RegionLink.where(b_type: category, interval: interval).delete_all
       where(b_types: category)
     # Outgoing links for the 'category', i.e. links that begin from regions of this category
     when :out
-      RegionLink.where(a_type: category).delete_all
+      RegionLink.where(a_type: category, interval: interval).delete_all
       where(a_types: category)
     when :both
-      RegionLink.where(a_type: category).delete_all
-      RegionLink.where(b_type: category).delete_all
+      RegionLink.where(a_type: category, interval: interval).delete_all
+      RegionLink.where(b_type: category, interval: interval).delete_all
       where(a_types: category, b_types: category)
     end
 
@@ -67,7 +68,7 @@ class PostLink
 
       # Incoming links for the 'category', i.e. links that end inside regions of this category
       when :in
-        next if !link.b_time.utc.hour.in?(hours)
+        next if !(link.b_time.utc.hour.in?(region_hours) && link.a_time.utc.hour.in?(other_hours))
         start_region = region_per_post[link.a_id]
         if start_region.nil?
           point = LinkSpaceTimeId.new(link.a_loc["coordinates"])
@@ -79,7 +80,7 @@ class PostLink
         end_node = {id: end_region.center["coordinates"].join("_"), data: {r: end_region} }
       # Outgoing links for the 'category', i.e. links that begin from regions of this category
       when :out
-        next if !link.a_time.utc.hour.in?(hours)
+        next if !(link.a_time.utc.hour.in?(region_hours) && link.b_time.utc.hour.in?(other_hours))
         start_region = region_per_post[link.a_id]
         start_node = {id: start_region.center["coordinates"].join("_"), data: {r: start_region} }
         end_region = region_per_post[link.b_id]
@@ -90,7 +91,7 @@ class PostLink
           end_node = {id: end_region.center["coordinates"].join("_"), data: {r: end_region} }
         end
       when :both
-        next if !(link.a_time.utc.hour.in?(hours) && link.b_time.utc.hour.in?(hours))
+        next if !(link.a_time.utc.hour.in?(region_hours) && link.b_time.utc.hour.in?(region_hours))
 
       end
 
@@ -103,7 +104,7 @@ class PostLink
     end
 
     aggregate_graph(graph, max_level, max_nodes)
-    output_edges(graph, category, in_out_or_both)
+    output_edges(graph, category, in_out_or_both, region_hours)
     graph
   end
 
@@ -137,7 +138,8 @@ class PostLink
     end
   end
 
-  def self.output_edges(graph, category, in_out_or_both = :in)
+  def self.output_edges(graph, category, in_out_or_both = :in, hours = (0..23))
+    interval = [hours.first, hours.last].map { |h| h.to_s.rjust(2, "0") }.join("-")
     graph.edges.values.each do |edge|
       a_loc = nil; b_loc = nil; a_ctr = nil; b_ctr = nil;
       if edge.node1.data[:r].nil?
@@ -161,10 +163,11 @@ class PostLink
         b_loc: b_loc,
         a_times: edge.data[:t].map(&:first),
         b_times: edge.data[:t].map(&:last),
-        line: {"type" => "LineString", "coordinates" => [a_ctr, b_ctr]},
         a_type: (in_out_or_both != :in ? category : nil),
         b_type: (in_out_or_both != :out ? category : nil),
-        line_weight: edge.weight
+        line: {"type" => "LineString", "coordinates" => [a_ctr, b_ctr]},
+        line_weight: edge.weight,
+        interval: interval
       )
       link.distance = link.start_point.spherical_distance(link.end_point)
       link.upsert

@@ -7,8 +7,8 @@ class RegionLink
   field :b_times, type: Array
   field :a_type, type: String
   field :b_type, type: String
+  field :interval, type: String
   field :distance, type: Integer
-  field :duration_sec, type: Integer
   field :line, type: Hash
   field :line_weight, type: Integer
 
@@ -22,6 +22,21 @@ class RegionLink
 
   def route
     GeoRuby::SimpleFeatures::LineString.from_coordinates(line["coordinates"])
+  end
+
+  def self.compute_all(duration = 6, start_hour = 4, max_level = 2, max_nodes = 10)
+    categories = Region.distinct("category")
+    intervals = (0..23).entries
+    intervals += intervals.slice!(0, start_hour)
+    intervals = intervals.each_slice(duration).to_a
+    categories.each do |category|
+      intervals.each_with_index do |interval, ii|
+        prev_interval = intervals[(ii - 1) % intervals.length]
+        next_interval = intervals[(ii + 1) % intervals.length]
+        PostLink.hybrid_grid(category, :in , max_level, max_nodes, interval, interval+prev_interval)
+        PostLink.hybrid_grid(category, :out, max_level, max_nodes, interval, interval+next_interval)
+      end
+    end
   end
 
 end

@@ -33,7 +33,8 @@ jQuery ->
         fillOpacity: 0.2,
         strokeColor: feature.getProperty('c'),
         strokeOpacity: 0.5,
-        strokeWeight: feature.getProperty('w') || 2
+        strokeWeight: feature.getProperty('w') || 2,
+        zIndex: feature.getProperty('z') || 1
       }
 
     gmap.data.addListener 'click', (event) ->

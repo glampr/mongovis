@@ -25,8 +25,8 @@ class Region
     Region.all.unset(:post_ids)
     Region.all.each do |region|
       puts region.inspect
-      posts_in_region = Post.where(coordinates: {"$geoWithin" => {"$geometry" => region.bounds}})
-      puts "Found #{posts_in_region} posts".blue
+      posts_in_region = Post.where(coordinates: {"$geoWithin" => {"$geometry" => region.bounds}}).entries
+      puts "Found #{posts_in_region.length} posts".blue
       region.add_to_set(post_ids: posts_in_region.map(&:_id))
       puts "--------"
     end

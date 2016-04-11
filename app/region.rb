@@ -22,9 +22,13 @@ class Region
   end
 
   def self.populate_post_ids
-    Region.unset(:post_ids)
+    Region.all.unset(:post_ids)
     Region.all.each do |region|
-      region.add_to_set(post_ids: Post.where(coordinates: {"$geoWithin" => {"$geometry" => region.bounds}}).map(&:_id))
+      puts region.inspect
+      posts_in_region = Post.where(coordinates: {"$geoWithin" => {"$geometry" => region.bounds}})
+      puts "Found #{posts_in_region} posts".blue
+      region.add_to_set(post_ids: posts_in_region.map(&:_id))
+      puts "--------"
     end
   end
 

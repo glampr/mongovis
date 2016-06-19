@@ -12,9 +12,9 @@ class Post
   # mongoimport --host 127.0.0.1 --database test --collection posts --jsonArray --file import.json
   def self.import(connection_options)
     RawPost.store_in(connection_options)
-    RawPost.in_batches(:id, 10000).each do |records|
+    RawPost.all.in_batches(:id, 10000).each do |records|
       documents = []
-      record.each do
+      records.each do |r|
         document = {}
         document["user_id"] = r["user"]["_id"] || r["user"]["id"]
         document["user_screen_name"] = r["user"]["screen_name"]
@@ -56,4 +56,10 @@ class Post
     aggregation.entries
   end
 
+end
+
+
+class RawPost
+  include Mongoid::Document
+  include Mongoid::Attributes::Dynamic
 end

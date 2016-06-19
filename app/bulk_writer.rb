@@ -2,9 +2,11 @@ class BulkWriter
 
   def self.upsert_all(docs, collection, options = {})
     commands = docs.map do |d|
-      doc = d.as_document.to_h.deep_symbolize_keys if d.respond_to?(:as_document)
+      doc = nil
+      doc ||= d.as_document.to_h.deep_symbolize_keys if d.respond_to?(:as_document)
       # Will not be need after https://jira.mongodb.org/browse/MONGOID-4280
-      doc = d.deep_symbolize_keys if d.respond_to?(:deep_symbolize_keys)
+      doc ||= d.deep_symbolize_keys if d.respond_to?(:deep_symbolize_keys)
+      doc ||= d
       update = doc.any? { |k, v| k.to_s.starts_with?("$") } ? doc : {"$set" => doc}
       document_id = doc[:_id] || doc.fetch(:$set, {})[:_id] || doc.fetch(:$setOnInsert, {})[:_id]
       {update_one: {filter: {_id: document_id }, update: update, upsert: true}}

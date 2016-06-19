@@ -16,12 +16,13 @@ class Post
       documents = []
       records.each do |r|
         document = {}
-        document["user_id"] = r["user"]["_id"] || r["user"]["id"]
-        document["user_screen_name"] = r["user"]["screen_name"]
-        document["text"] = r["text"]
-        document["posted_at"] = Time.parse(r["timestamp_ms"] / 1000)
-        document["timestamp"] = r["timestamp_ms"] / 1000
-        document["coordinates"] = r["coordinates"]
+        document[:_id] = r["_id"] || r["id"]
+        document[:user_id] = r["user"]["_id"] || r["user"]["id"]
+        document[:user_screen_name] = r["user"]["screen_name"]
+        document[:text] = r["text"]
+        document[:posted_at] = Time.parse(r["timestamp_ms"] / 1000)
+        document[:timestamp] = r["timestamp_ms"] / 1000
+        document[:coordinates] = r["coordinates"]
         documents << document
       end
       BulkWriter.upsert_all(documents, Post.collection)

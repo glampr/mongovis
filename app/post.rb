@@ -12,7 +12,7 @@ class Post
   # mongoimport --host 127.0.0.1 --database test --collection posts --jsonArray --file import.json
   def self.import(connection_options)
     RawPost.store_in(connection_options)
-    RawPost.all.in_batches(:id, 10000).each do |records|
+    RawPost.all.in_batches(:id, 10000) do |records|
       documents = []
       records.each do |r|
         document = {}

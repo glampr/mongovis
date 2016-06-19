@@ -10,14 +10,16 @@ class Post
   field :coordinates, type: Hash
 
   # mongoimport --host 127.0.0.1 --database test --collection posts --jsonArray --file import.json
-  def self.import
-    Post.with(database: "test").all.each do |r|
-      document = r.as_document.to_hash
-      document["posted_at"] = Time.parse(r["posted_at"])
-      document["coordinates"] = [r["longitude"], r["latitude"]].none?(&:nil?) ?
-          {"type" => "Point", "coordinates" => [r["longitude"], r["latitude"]]} : nil
-      document.delete("latitude")
-      document.delete("longitude")
+  def self.import(connection_options)
+    RawPost.store_in(connection_options)
+    RawPost.in_batches(:id, 10000).each do |r|
+      document = {}
+      document["user_id"] = r["user"]["_id"] || r["user"]["id"]
+      document["user_screen_name"] = r["user"]["screen_name"]
+      document["text"] = r["text"]
+      document["posted_at"] = Time.parse(r["timestamp_ms"] / 1000)
+      document["timestamp"] = r["timestamp_ms"] / 1000
+      document["coordinates"] = r["coordinates"]
       Post.create(document)
     end
   end

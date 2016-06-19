@@ -26,7 +26,7 @@ development:
     default:
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: socialinks_dev
+      database: socialinks_dev2
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
@@ -109,7 +109,7 @@ test:
     default:
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: socialinks_test
+      database: socialinks_test2
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
@@ -192,7 +192,7 @@ production:
     default:
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: socialinks_pro
+      database: socialinks_pro2
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:

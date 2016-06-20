@@ -24,6 +24,12 @@ class RegionLink
     GeoRuby::SimpleFeatures::LineString.from_coordinates(line["coordinates"])
   end
 
+  def self.prep
+    Post.to_paths(Post.all)
+    Path.to_links(Path.all)
+    PostLink.assign_categories
+  end
+
   def self.compute_all(duration = 6, start_hour = 4, max_level = 2, max_nodes = 10)
     categories = Region.distinct("category")
     intervals = (0..23).entries

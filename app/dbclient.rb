@@ -6,7 +6,7 @@ class DbClient
   def connect(opts)
     opts.reject! { |k, v| v.to_s.empty? }
     host = (opts.values_at(:mongo_host, "mongo_host") + ["127.0.0.1:27017"]).compact.first
-    db   = (opts.values_at(:mongo_db, "mongo_db") + ["tmp"]).compact.first
+    db   = (opts.values_at(:mongo_db, "mongo_db") + ["socialinks_pro"]).compact.first
     user = (opts.values_at(:mongo_user, "mongo_user")).compact.first
     pass = (opts.values_at(:mongo_pass, "mongo_pass")).compact.first
     connection_options = {database: db}
@@ -18,6 +18,7 @@ class DbClient
     if @client.nil? || server_address != host || db != @db
       @client.try(:close)
       @client = Mongo::Client.new([host], connection_options)
+      RegionLink.store_in(database: db)
     end
     @db = db
   end

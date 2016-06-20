@@ -18,8 +18,8 @@ class DbClient
     if @client.nil? || server_address != host || db != @db
       @client.try(:close)
       @client = Mongo::Client.new([host], connection_options)
-      RegionLink.store_in(database: db)
     end
+    RegionLink.store_in(database: db)
     @db = db
   end
 
